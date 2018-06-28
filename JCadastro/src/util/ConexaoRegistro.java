@@ -1,0 +1,70 @@
+package util;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
+/**
+ *
+ * @author1 Gabriel Henrique Teles Santos
+ * @author2 Gabriel Dordal Tinelli
+ * @since 27/06/18
+ * @version 1.0
+ */
+
+public class ConexaoRegistro{
+
+    final private static String DRIVER = "com.mysql.jdbc.Driver";
+    final private static String URL = "jdbc:mysql://localhost/aulapoo";
+    final private static String USUARIO = "root";
+    final private static String SENHA = "supre123";
+    private static Connection mConexao;
+    public PreparedStatement statement;
+    ResultSet resultset;
+
+
+    public static Connection conectar() throws Exception{
+        Class.forName(DRIVER);
+        mConexao = DriverManager.getConnection(URL,USUARIO,SENHA);
+        return mConexao;
+    }
+    
+    public boolean getObterDados()
+    {
+        boolean result = true;
+        try{
+            Class.forName(DRIVER);
+            mConexao = DriverManager.getConnection(URL, USUARIO, SENHA);
+        }
+        catch(ClassNotFoundException Driver){
+            JOptionPane.showMessageDialog(null, "Driver nao localizado"+Driver);
+            result = false;
+        }
+        catch(SQLException Fonte){
+            JOptionPane.showMessageDialog(null, "Deu erro com a conexao"+"com a fonte de dados"+Fonte);
+            result = false;
+        }
+        return result;
+    }
+    
+    public ResultSet executeSQL(String sql)
+    {
+        try
+        {
+            //statement = mConexao.createStatement(resultset.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            StringBuffer sb = new StringBuffer(sql);
+            
+            statement = mConexao.prepareStatement(sb.toString());
+            resultset = statement.executeQuery();
+        }
+        catch(SQLException sqlex){
+            JOptionPane.showMessageDialog(null, "Nao foi possivel"+"executar o comando sql,"+sqlex+", o sql passado foi"+ sql);
+        }
+        return resultset;
+    }
+    
+}
